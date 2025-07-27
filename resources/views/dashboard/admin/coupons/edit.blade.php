@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.master')
 
 @section('css')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
 @section('pageTitle')
@@ -27,65 +27,104 @@
         @csrf
         @method('PUT')
         <div class="row g-3">
-
-            <div class="col-md-4">
-                <label for="name" class="form-label">الكوبون:</label>
-                <input type="text" id="name" name="name" class="form-control" required
-                    value="{{ old('name', $coupon->name) }}">
+            <div class="col-md-6">
+                <label>{{ __('site/site.coupon_code') }}</label>
+                <input type="text" name="code" class="form-control" value="{{ old('code', $coupon->code) }}" required>
             </div>
-
-            <div class="col-md-4">
-                <label for="type" class="form-label">النوع:</label>
-                <select id="type" name="type" class="form-control" required>
-                    <option value="">اختر النوع</option>
-                    <option value="percentage" {{ old('type', $coupon->type) == 'percentage' ? 'selected' : '' }}>نسبة مئوية %</option>
-                    <option value="fixed" {{ old('type', $coupon->type) == 'fixed' ? 'selected' : '' }}>سعر ثابت</option>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.type') }}</label>
+                <select name="type" class="form-control">
+                    <option value="fixed" {{ $coupon->type == 'fixed' ? 'selected' : '' }}>{{ __('site/site.fixed') }}
+                    </option>
+                    <option value="percentage" {{ $coupon->type == 'percentage' ? 'selected' : '' }}>{{
+                        __('site/site.percentage') }}</option>
                 </select>
             </div>
-
-            <div class="col-md-4 {{ old('type', $coupon->type) === 'percentage' ? '' : 'd-none' }}" id="percentageDiv">
-                <label for="percentage" class="form-label">النسبة:</label>
-                <input type="number" id="percentage" name="percentage" class="form-control" step="0.01" min="0"
-                    value="{{ old('percentage', $coupon->percentage) }}">
-                <div id="percentageError" class="mt-1 text-danger d-none">❌ لا يمكن إدخال قيمة سالبة.</div>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.value') }}</label>
+                <input type="number" name="value" class="form-control" value="{{ old('value', $coupon->value) }}">
             </div>
-
-            <div class="col-md-4 {{ old('type', $coupon->type) === 'fixed' ? '' : 'd-none' }}" id="fixedDiv">
-                <label for="fixed" class="form-label">السعر الثابت:</label>
-                <input type="number" id="fixed" name="fixed" class="form-control" step="0.01" min="0"
-                    value="{{ old('fixed', $coupon->fixed) }}">
-                <div id="fixedError" class="mt-1 text-danger d-none">❌ لا يمكن إدخال قيمة سالبة.</div>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.min_spend') }}</label>
+                <input type="number" name="min_spend" class="form-control"
+                    value="{{ old('min_spend', $coupon->min_spend) }}">
             </div>
-
-            <div class="col-md-4">
-                <label for="from" class="form-label">من:</label>
-                <input type="date" id="from" name="from" class="form-control" required
-                    value="{{ old('from', $coupon->from) }}">
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.max_spend') }}</label>
+                <input type="number" name="max_spend" class="form-control"
+                    value="{{ old('max_spend', $coupon->max_spend) }}">
             </div>
-
-            <div class="col-md-4">
-                <label for="to" class="form-label">إلى:</label>
-                <input type="date" id="to" name="to" class="form-control" required
-                    value="{{ old('to', $coupon->to) }}">
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.starts_at') }}</label>
+                <input type="date" name="starts_at" class="form-control"
+                    value="{{ old('starts_at', \Carbon\Carbon::parse($coupon->starts_at)->format('Y-m-d')) }}">
             </div>
-
-            <div class="col-md-4">
-                <label for="status" class="form-label">الحالة:</label>
-                <select name="status" class="form-control" required>
-                    <option value="">اختر الحالة</option>
-                    @foreach (\App\Models\Coupon::STATUS as $item)
-                        <option value="{{ $item }}" {{ old('status', $coupon->status) == $item ? 'selected' : '' }}>
-                            {{ $item }}
-                        </option>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.expires_at') }}</label>
+                <input type="date" name="expires_at" class="form-control"
+                    value="{{ old('expires_at', \Carbon\Carbon::parse($coupon->expires_at)->format('Y-m-d')) }}">
+            </div>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.status') }}</label>
+                <select name="status" class="form-control">
+                    <option value="active" {{ $coupon->status == 'active' ? 'selected' : '' }}>{{ __('site/site.active') }}
+                    </option>
+                    <option value="inactive" {{ $coupon->status == 'inactive' ? 'selected' : '' }}>{{
+                        __('site/site.inactive') }}</option>
+                </select>
+            </div>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.select_products') }}</label>
+                <select name="products[]" id="applicable_products" class="form-control" multiple>
+                    @foreach ($products as $id => $name)
+                    <option value="{{ $id }}" {{ in_array($id, $coupon->products->pluck('id')->toArray()) ? 'selected' : ''
+                        }}>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <div class="col-12" id="submitContainer">
-                <button type="submit" class="mt-3 btn btn-success w-100">💾 حفظ</button>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.exclude_products') }}</label>
+                <select name="excluded_products[]" id="excluded_products" class="form-control" multiple>
+                    @foreach ($products as $id => $name)
+                    <option value="{{ $id }}" {{ in_array($id, $coupon->excludedProducts->pluck('id')->toArray()) ?
+                        'selected' : '' }}>{{ $name }}</option>
+                    @endforeach
+                </select>
             </div>
-
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.select_categories') }}</label>
+                <select name="categories[]" id="applicable_categories" class="form-control" multiple>
+                    @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}" {{ in_array($id, $coupon->categories->pluck('id')->toArray()) ? 'selected' :
+                        '' }}>{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+    
+            <div class="col-md-6">
+                <label>{{ __('site/site.exclude_categories') }}</label>
+                <select name="excluded_categories[]" id="excluded_categories" class="form-control" multiple>
+                    @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}" {{ in_array($id, $coupon->excludedCategories->pluck('id')->toArray()) ?
+                        'selected' : '' }}>{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
+    
+        <button type="submit" class="mt-3 btn btn-primary w-100">
+            {{ __('site/site.save_coupon') }}
+        </button>
     </form>
 </div>
 
@@ -94,82 +133,38 @@
     @endsection
 
     @push('js')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const typeSelect = document.getElementById('type');
-        const percentageDiv = document.getElementById('percentageDiv');
-        const fixedDiv = document.getElementById('fixedDiv');
-        const percentageInput = document.getElementById('percentage');
-        const fixedInput = document.getElementById('fixed');
-        const percentageError = document.getElementById('percentageError');
-        const fixedError = document.getElementById('fixedError');
-        const submitContainer = document.getElementById('submitContainer');
-
-        function toggleInputs() {
-            const selectedType = typeSelect.value;
-            percentageDiv.classList.add('d-none');
-            fixedDiv.classList.add('d-none');
-            percentageError.classList.add('d-none');
-            fixedError.classList.add('d-none');
-            submitContainer.classList.remove('d-none');
-
-            if (selectedType === 'percentage') {
-                percentageDiv.classList.remove('d-none');
-            } else if (selectedType === 'fixed') {
-                fixedDiv.classList.remove('d-none');
-            }
-        }
-
-        function validateInput(input, errorDiv) {
-            const value = input.value.trim();
-            if (value === "") {
-                errorDiv.classList.add('d-none');
-                input.classList.remove('is-invalid');
-                return true;
-            }
-
-            const numericValue = parseFloat(value);
-            if (numericValue < 0 || isNaN(numericValue)) {
-                errorDiv.classList.remove('d-none');
-                input.classList.add('is-invalid');
-                return false;
-            } else {
-                errorDiv.classList.add('d-none');
-                input.classList.remove('is-invalid');
-                return true;
-            }
-        }
-
-        function validateForm() {
-            let isValid = true;
-
-            if (!percentageDiv.classList.contains('d-none')) {
-                isValid = validateInput(percentageInput, percentageError);
-            }
-
-            if (!fixedDiv.classList.contains('d-none')) {
-                isValid = validateInput(fixedInput, fixedError);
-            }
-
-            if (isValid) {
-                submitContainer.classList.remove('d-none');
-            } else {
-                submitContainer.classList.add('d-none');
-            }
-        }
-
-        typeSelect.addEventListener('change', function () {
-            toggleInputs();
-            validateForm();
-        });
-
-        percentageInput.addEventListener('input', validateForm);
-        fixedInput.addEventListener('input', validateForm);
-
-        toggleInputs();
-    });
-</script>
+            $(document).ready(function () {
+                        $('#applicable_products').select2({
+                            placeholder: "{{ __('site.select_products') }}",
+                            width: '100%',
+                            dropdownAutoWidth: true,
+                            dropdownParent: $('#applicable_products').parent(),
+                        });
+                        $('#excluded_products').select2({
+                            placeholder: "{{ __('site.exclude_products') }}",
+                            width: '100%',
+                            dropdownParent: $('#excluded_products').parent(),
+                            dir: 'rtl',
+                            dropdownAutoWidth: true,
+                        });
+                        $('#applicable_categories').select2({
+                            placeholder: "{{ __('site.select_categories') }}",
+                            width: '100%',
+                            dropdownParent: $('#applicable_categories').parent(),
+                            dir: 'rtl',
+                            dropdownAutoWidth: true,
+                        });
+                        $('#excluded_categories').select2({
+                            placeholder: "{{ __('site.exclude_categories') }}",
+                            width: '100%',
+                            dropdownParent: $('#excluded_categories').parent(),
+                            dir: 'rtl',
+                            dropdownAutoWidth: true,
+                        });
+                    });
+        </script>
 
 
     @endpush

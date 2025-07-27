@@ -14,12 +14,3 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']], function () {
-    Route::group(['prefix' => 'general', 'as' => 'general.'], function () {
-        //Route::get('view-order/{id}', [General\OrderController::class, 'viewPdf'])->name('orders.viewPdf');
-        Route::get('view-order/{order}/pdf', [General\OrderController::class, 'downloadInvoice'])->name('orders.viewPdf');
-        Route::resource('orders', General\OrderController::class);
-        Route::post('orders/{order}/update-status', [General\OrderController::class, 'updateStatus'])->name('orders.updateStatus');;
-    });
-});

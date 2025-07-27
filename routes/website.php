@@ -15,5 +15,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['lo
         Route::get('/', Website\WebsiteController::class)->name('home');
         Route::get('shop', [Website\ShopController::class, 'index'])->name('shop.index');
         Route::get('product/{id}', [Website\ShopController::class, 'show'])->name('shop.product.show');
-
+        Route::get('cart', [Website\CartController::class, 'index'])->name('cart');
+        Route::resource('cart', Website\CartController::class)->except(['index']);
+        Route::get('checkout', [Website\CheckoutController::class, 'create'])->name('checkout');
+        Route::post('checkout', [Website\CheckoutController::class, 'store']);
 });

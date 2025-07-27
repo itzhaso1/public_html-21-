@@ -1,6 +1,56 @@
 @extends('website.layouts.common.website')
 @section('css')
+<style>
+    .subcategory-swiper {
+        position: relative;
+        padding: 20px 0;
+    }
 
+    .subcategory-swiper .swiper-slide {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .subcategory-swiper .swiper-slide a img {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .subcategory-swiper .swiper-slide:hover img {
+        transform: scale(1.05);
+    }
+
+    .subcategory-swiper .swiper-button-next,
+    .subcategory-swiper .swiper-button-prev {
+        color: #3c3c3c;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        top: 35%;
+        transform: translateY(-50%);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .subcategory-swiper .swiper-button-next {
+        right: -20px;
+    }
+
+    .subcategory-swiper .swiper-button-prev {
+        left: -20px;
+    }
+
+    @media (max-width: 768px) {
+
+        .subcategory-swiper .swiper-button-next,
+        .subcategory-swiper .swiper-button-prev {
+            display: none;
+        }
+    }
+</style>
 
 <style>
     .quantity-ed {
@@ -47,6 +97,7 @@
         margin: 0;
     }
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
 @endsection
 
 @section('pageTitle')
@@ -89,7 +140,7 @@
                                     <div class="category-wrapper">
                                         @foreach($categories as $category)
                                             <div class="single-category">
-                                                <input 
+                                                <input
                                                     type="radio"
                                                     name="category_id"
                                                     id="cat{{ $category->id }}"
@@ -112,7 +163,7 @@
                                     <div class="category-wrapper">
                                         @foreach($brands as $brand)
                                             <div class="single-category">
-                                                <input 
+                                                <input
                                                     type="radio"
                                                     name="brand_id"
                                                     id="brand{{ $brand->id }}"
@@ -129,7 +180,7 @@
                             </div>
 
                             {{-- Submit Button --}}
-                            <div class="single-filter-box mt-2 d-flex justify-content-between gap-2">
+                            <div class="gap-2 mt-2 single-filter-box d-flex justify-content-between">
                                 <button type="submit" class="rts-btn btn-primary w-50">Apply Filters</button>
                                 <a href="{{ route('shop.index') }}" class="rts-btn btn-secondary w-50">Reset Filters</a>
                             </div>
@@ -141,6 +192,30 @@
                 {{-- Product Grid --}}
                 <div class="col-xl-9 col-lg-12">
                     <div class="tab-content" id="myTabContent">
+                        <!-- Start SubCategory Swiper Filter -->
+                        <div class="position-relative">
+                            <!-- Swiper Container -->
+                            <div class="swiper subcategory-swiper mb-4">
+                                <div class="swiper-wrapper">
+                                    @foreach($subcategories as $subcategory)
+                                    <div class="swiper-slide text-center">
+                                        <a href="{{ route('shop.index', ['category_id' => $subcategory->id]) }}"
+                                            class="text-decoration-none text-dark d-block">
+                                            <img src="{{ $subcategory->getMediaUrl('category', $subcategory, null, 'media', 'category') }}"
+                                                alt="{{ $subcategory->name }}"
+                                                style="width: 90px; height: 90px; object-fit: cover; border-radius: 10px; margin: 0 auto;">
+                                            <div class="mt-2 small">{{ $subcategory->name }}</div>
+                                        </a>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            
+                                {{-- الأسهم --}}
+                                <div class="swiper-button-prev"></div>
+                                <div class="swiper-button-next"></div>
+                            </div>
+                        </div>
+                        <!-- End SubCategory Swiper Filter -->
                         <div class="product-area-wrapper-shopgrid-list mt--20 tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
                             <div class="row g-4">
                                 @forelse($products as $product)
@@ -164,27 +239,23 @@
                                                     @endif
                                                 </div>
                                                 <div class="cart-counter-action">
-                                                    <form action="{{-- route('cart.add', $product->id) --}}" method="POST">
+                                                    <form action="{{ route('cart.store') }}" method="POST">
                                                         @csrf
-                                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-
-                                                            <!-- كمية + - -->
-                                                            <div class="d-flex align-items-center gap-2">
-                                                                <button type="button" class="btn btn-success rounded-circle p-2" onclick="increaseQty(this)">+</button>
+                                                        <input type="hidden" name="product_id" value="{{$product->id}}">
+                                                        <div class="flex-wrap gap-2 d-flex justify-content-between align-items-center">
+                                                            <div class="gap-2 d-flex align-items-center">
+                                                                <button type="button" class="p-2 btn btn-success rounded-circle" onclick="increaseQty(this)">+</button>
 
                                                                 <input name="quantity" id="quantity" type="number" value="1" min="1"
-                                                                    class="form-control text-center"
+                                                                    class="text-center form-control"
                                                                     style="width: 60px; height: 40px;">
 
-                                                                <button type="button" class="btn btn-warning rounded-circle p-2" onclick="decreaseQty(this)">−</button>
+                                                                <button type="button" class="p-2 btn btn-warning rounded-circle" onclick="decreaseQty(this)">−</button>
                                                             </div>
-
-                                                            <!-- زرار Add To Cart -->
-                                                            <button type="submit" class="rts-btn btn-primary radious-sm with-icon d-flex align-items-center gap-1">
+                                                            <button type="submit" class="gap-1 rts-btn btn-primary radious-sm with-icon d-flex align-items-center">
                                                                 <span class="btn-text">Add To Cart</span>
                                                                 <i class="fa-regular fa-cart-shopping"></i>
                                                             </button>
-
                                                         </div>
                                                     </form>
                                                 </div>
@@ -199,7 +270,7 @@
                             </div>
 
                             {{-- Pagination --}}
-                            <div class="row mt-4">
+                            <div class="mt-4 row">
                                 <div class="col-12 d-flex justify-content-center">
                                     {{ $products->appends(request()->query())->links() }}
                                 </div>
@@ -215,6 +286,7 @@
 
 @push('js')
 <script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     function increaseQty(button) {
     const input = button.parentElement.querySelector('input[type="number"]');
     let current = parseInt(input.value) || 1;
@@ -228,6 +300,52 @@ function decreaseQty(button) {
         input.value = current - 1;
     }
 }
-
+</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new Swiper(".subcategory-swiper", {
+                slidesPerView: 5,
+                spaceBetween: 15,
+                freeMode: true,
+                grabCursor: true,
+                breakpoints: {
+                    320: { slidesPerView: 2 },
+                    576: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    992: { slidesPerView: 5 },
+                    1200: { slidesPerView: 6 },
+                }
+            });
+        });
+    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const subcategoryCount = {{ count($subcategories) }};
+        const swiper = new Swiper('.subcategory-swiper', {
+            slidesPerView: subcategoryCount >= 6 ? 6 : subcategoryCount,
+            spaceBetween: 15,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                320: {
+                    slidesPerView: Math.min(subcategoryCount, 2.5),
+                },
+                576: {
+                    slidesPerView: Math.min(subcategoryCount, 3.5),
+                },
+                768: {
+                    slidesPerView: Math.min(subcategoryCount, 4),
+                },
+                992: {
+                    slidesPerView: Math.min(subcategoryCount, 5),
+                },
+                1200: {
+                    slidesPerView: Math.min(subcategoryCount, 6),
+                },
+            }
+        });
+    });
 </script>
 @endpush

@@ -221,5 +221,6 @@ return [
         'Type' => App\Models\Type::class,
         'Tag' => App\Models\Tag::class,
         'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdf::class,
+        'Cart' => App\Facades\Cart::class,
     ])->toArray(),
 ];

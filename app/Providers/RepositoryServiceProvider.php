@@ -82,7 +82,10 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Services\Contracts\CouponInterface',
             'App\Repositories\CouponRepository'
         );
-
+        $this->app->bind(
+            'App\Services\Contracts\CartInterface',
+            'App\Repositories\CartRepository'
+        );
         $this->app->bind(
             'App\Services\Contracts\OrderInterface',
             'App\Repositories\OrderRepository'

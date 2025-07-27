@@ -71,23 +71,27 @@
                                                 <div class="previous">${{ $product->price_before_discount }}</div>
                                                 @endif
                                             </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i
-                                                                class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i
-                                                                class="fa-regular fa-chevron-up"></i></button>
+                                            <form action="{{route('cart.store')}}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <div class="cart-counter-action">
+                                                    <div class="quantity-edit">
+                                                        <input type="text" name="quantity" class="input" value="1" min="1">
+                                                        <div class="button-wrapper-action">
+                                                            <button type="button" class="button"><i
+                                                                    class="fa-regular fa-chevron-down"></i></button>
+                                                            <button type="button" class="button plus">+<i
+                                                                    class="fa-regular fa-chevron-up"></i></button>
+                                                        </div>
                                                     </div>
+                                                    <button type="submit" class="rts-btn btn-primary radious-sm with-icon">
+                                                        <div class="btn-text">{{trans('site/site.add')}}</div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-cart-shopping"></i>
+                                                        </div>
+                                                    </button>
                                                 </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">Add</div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

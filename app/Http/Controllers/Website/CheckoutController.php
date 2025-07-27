@@ -1,0 +1,98 @@
+<?php
+
+namespace App\Http\Controllers\Website;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\{Order,OrderItem, Category, Coupon};
+use Illuminate\Support\Facades\DB;
+use App\Services\Contracts\CartInterface;
+class CheckoutController extends Controller {
+    public function __construct(protected CartInterface $cartInterface) {
+        $this->cartInterface = $cartInterface;
+    }
+    public function create() {
+        $cart = $this->cartInterface->get();
+        $total = $this->cartInterface->total();
+        $categories = Category::with(['translations', 'media', 'children.translations'])
+            ->whereNull('parent_id')
+            ->where('status', 'active')
+            ->get();
+        if($cart->count() == 0) {
+            return redirect()->route('home');
+        }
+        return view('website.pages.checkout')->with([
+            'categories' => $categories,
+            'cart' => $cart,
+            'total' => $total,
+            'pageTitle' => trans('site/site.checkout'),
+            'breadcrumbs' => [
+                ['title' => trans('site/site.checkout')],
+            ]
+        ]);
+    }
+
+    public function store(Request $request) {
+        $cart = $this->cartInterface->get();
+        $coupon = null;
+        if ($request->filled('coupon_code')) {
+            $coupon = Coupon::where('code', $request->post('coupon_code'))->first();
+            if (!$coupon) {
+                return redirect()->back()->with('error', 'الكوبون غير صالح');
+            }
+            if ($coupon->status != 'active') {
+                return redirect()->back()->with('error', 'هذا الكوبون غير مفعل حالياً');
+            }
+            $now = now();
+            if ($coupon->starts_at && $now->lt($coupon->starts_at)) {
+                return redirect()->back()->with('error', 'الكوبون غير مفعل بعد');
+            }
+            if ($coupon->expires_at && $now->gt($coupon->expires_at)) {
+                return redirect()->back()->with('error', 'انتهت صلاحية الكوبون');
+            }
+            $cartTotal = $this->cartInterface->total();
+            if ($coupon->min_spend && $cartTotal < $coupon->min_spend) {
+                return redirect()->back()->with('error', 'الحد الأدنى لتفعيل الكوبون هو ' . $coupon->min_spend . ' جنيه');
+            }
+            if ($coupon->max_spend && $cartTotal > $coupon->max_spend) {
+                return redirect()->back()->with('error', 'الحد الأقصى لاستخدام الكوبون هو ' . $coupon->max_spend . ' جنيه');
+            }
+            $discountedTotal = $this->cartInterface->applyCoupon($coupon);
+        } else {
+            $discountedTotal = $this->cartInterface->total();
+        }
+        try {
+            DB::beginTransaction();
+            $order = Order::create([
+            'user_id' => auth()->user()->id,
+                'payment_type' => 'cash_on_delivery',
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'total_price' => $discountedTotal,
+                'coupon_id' => $coupon?->id,
+            ]);
+            foreach($cart as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'product_price' => $item->product->price,
+                    'quantity' => $item->quantity,
+                    'options' => $item->options,
+                ]);
+            }
+            foreach ($request->post('addr') as $type => $address) {
+                $address['type'] = $type;
+                $order->addresses()->create($address);
+            }
+            DB::commit();
+            $this->cartInterface->empty();
+            return redirect()->route('shop.index')->with([
+                'success' => trans('site/site.product_add_successfully')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', '!حدث خطأ ما');
+        }
+    }
+}

@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $settings = Cache::remember('settings', now()->addMinutes(5), function () {
-            return Setting::with(['media'])->first() ?? new Setting();
+            //return Setting::with(['media'])->first() ?? new Setting();
         });
         $logo = /*$settings->getMediaUrl('logo') ??*/ null;
         $favicon = /*$settings->getMediaUrl('favicon') ??*/ null;

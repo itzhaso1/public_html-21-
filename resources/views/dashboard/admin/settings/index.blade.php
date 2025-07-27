@@ -87,7 +87,7 @@
                     </div>
 
                     <!-- Start Logo & Favicon & Banner -->
-                    <div class="container p-4 mt-2 bg-white rounded shadow">
+                    {{--<div class="container p-4 mt-2 bg-white rounded shadow">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="p-3 mb-3 text-center border rounded">
@@ -138,7 +138,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>--}}
 
                     <!-- End Name & alert message -->
                     <hr>

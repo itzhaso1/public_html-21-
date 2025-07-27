@@ -1,84 +1,46 @@
 <?php
-
 namespace App\Models;
-
-use App\Models\Branch;
-use App\Scopes\OrderScope;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\{DB};
-use App\Enums\Order\{OrderStatus, OrderPaymentType};
-use App\Models\Concerns\History\Historyable;
-class Order extends Model
-{
-    use HasFactory, Historyable;
-    protected $fillable = ['user_id', 'status', 'total_price', 'branch_id', 'order_location', 'order_number', 'is_delivery', 'payment_type', 'payment_status'];
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'order_product')
-            ->withPivot('id', 'quantity', 'price')
-            ->using(OrderProduct::class); // Enable pivot model
-    }
-    public function details()
-    {
-        return $this->hasMany(OrderProductDetail::class);
+use Illuminate\Database\Eloquent\Model;
+class Order extends Model {
+    use HasFactory;
+    protected $fillable = ['user_id', 'status', 'number', 'payment_status', 'payment_type', 'total_price', 'coupon_id'];
+    public function user() {
+        return $this->belongsTo(User::class)->withDefault([
+            'name'=>'Guest Customer'
+        ]);
     }
 
-     public function extras()
-    {
-        return $this->hasManyThrough(OrderProductExtra::class, OrderProductDetail::class, 'order_id', 'order_product_id', 'id', 'order_product_id');
+    public function coupon() {
+        return $this->belongsTo(Coupon::class);
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+
+    public function products() {
+        return $this->belongsToMany(Product::class, 'order_items', 'order_id','product_id', 'id', 'id')
+        ->using(OrderItem::class)
+        ->withPivot([
+            'product_name',
+            'product_price',
+            'quantity',
+            'options'
+        ]);
     }
 
-    public function branch()
-    {
-        return $this->belongsTo(Branch::class, 'branch_id');
-
-    }
-    public function branches($id)
-    {
-        $order = Branch::where('id', $id)->first('name');
-        return $order;
-    }
-    public function totalQuantity()
-    {
-        return $this->products()->sum('quantity');
+    public function addresses() {
+        return $this->hasMany(OrderAddress::class);
     }
 
-    public function totalProductsPrice()
-    {
-        return $this->products()->sum(DB::raw('quantity * price'));
+    protected static function booted() {
+        static::creating(function (Order $order) {
+            $order->number = Order::getNextOrderNumber();
+        });
     }
-
-    protected $casts = [
-        //'status' => OrderStatus::class,
-        'payment_type' => OrderPaymentType::class
-    ];
-
-    public function getStatusLabelAttribute(): string
-    {
-        return $this->status->label();
-    }
-
-    protected static function booted()
-    {
-        static::addGlobalScope(new OrderScope);
-    }
-
-    public function getDeliveryTypeAttribute() {
-        if ($this->is_delivery) {
-            $link = $this->order_location;
-            return 'توصيل<br><a href="' . $link . '" target="_blank" class="btn btn-sm btn-primary mt-1">تتبع الطلب</a>';
+    public static function getNextOrderNumber() {
+        $number = Order::whereYear('created_at', date('Y'))->max('number');
+        if($number) {
+            return $number + 1;
         }
-        return 'استلام من الفرع';
-    }
-
-    public function deliveryType()
-    {
-        return $this->is_delivery ? 'توصيل للعميل' : 'استلام من الفرع';
+        return date('Y') . '0001';
     }
 }

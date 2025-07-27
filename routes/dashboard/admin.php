@@ -37,8 +37,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['lo
         Route::resource('coupons', Dashboard\CouponController::class);
 //        Route::resource('orders', Dashboard\OrderController::class);
         Route::resource('users', Dashboard\UserController::class)->names('user');
-        Route::group(['prefix' => 'general', 'as' => 'general.'], function () {
-            Route::resource('orders', Dashboard\General\OrderController::class);
+        Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+            Route::get('orders', [Dashboard\OrderController::class, 'index'])->name('index');
+            Route::get('{order}', [Dashboard\OrderController::class, 'show'])->name('show');
         });
         Route::get('dashboard', Dashboard\DashboardController::class)->name('dashboard');
     });

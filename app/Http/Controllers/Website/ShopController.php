@@ -22,9 +22,10 @@ class ShopController extends Controller {
         }
         $products = $products->latest()->paginate(12);
         $categories = Category::with('translations')->get();
+        $subcategories = Category::whereNotNull('parent_id')->with(['translations', 'media'])->get();
         $brands = Brand::all();
         $pageTitle = trans('site/site.shop');
-        return view('website.pages.shop', compact('products', 'categories', 'brands', 'pageTitle'))->with([
+        return view('website.pages.shop', compact('products', 'categories', 'brands', 'pageTitle', 'subcategories'))->with([
             'breadcrumbs' => [
                 ['title' => trans('site/site.shop')],
             ]
