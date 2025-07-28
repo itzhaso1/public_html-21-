@@ -47,6 +47,10 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\MainSettingRepository'
         );
         $this->app->bind(
+            'App\Services\Contracts\PageInterface',
+            'App\Repositories\PageRepository'
+        );
+        $this->app->bind(
             'App\Services\Contracts\SliderInterface',
             'App\Repositories\SliderRepository'
         );

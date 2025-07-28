@@ -80,6 +80,10 @@ abstract class BaseDataTable extends DataTable
         return '<span class="badge badge-'.$badge.'">'.$value.'</span>';
     }
 
+    protected function formatColoredBadge(string $text, string $color = 'secondary'): string {
+        return '<span class="badge badge-' . $color . '">' . $text . '</span>';
+    }
+
     protected function formatStatus($status): string
     {
         $badge = $status == 'active' ? 'success' : 'primary';

@@ -4,7 +4,7 @@
             <div class="col-lg-12">
                 <div class="logo-search-category-wrapper">
                     <a href="index.html" class="logo-area">
-                        <img src="{{asset('assets/images/logo/logo-01.svg')}}" alt="logo-main" class="logo">
+                        <img src="{{$logo}}" alt="logo-main" class="logo" style="max-width: 100px; height: auto;">
                     </a>
                     <div class="category-search-wrapper">
                         <div class="category-btn category-hover-header">
@@ -87,10 +87,6 @@
                                 <span>{{ trans('site/site.my_account') }}</span>
                             </a>
                         @endauth
-                        <a href="wishlist.html" class="btn-border-only wishlist">
-                            <i class="fa-regular fa-heart"></i>
-                            <span>{{ trans('site/site.wishlist') }}</span>
-                        </a>
                         <x-cart-menu />
                     </div>
                 </div>

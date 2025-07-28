@@ -22,7 +22,9 @@
         <!--end::Header-->
         <!--begin::Body-->
         <div class="py-3 card-body">
-            <form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
+            
+        </div>
+        <!--begin::Body--><form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="container p-4 mt-2 bg-white rounded shadow">
                     <div class="row">
@@ -109,8 +111,6 @@
                 </div>
                 <button type="submit" class="btn btn-success w-100">حفظ</button>
             </form>
-        </div>
-        <!--begin::Body-->
     </div>
     @endsection
 

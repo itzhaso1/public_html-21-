@@ -35,7 +35,6 @@
                 <form id="mainSettings" action="{{ route('admin.mainSettings.store') }}" method="post"
                     enctype="multipart/form-data">
                     @csrf
-
                     <!-- Start General Settings -->
                     <div class="form-group row">
                         <div class="col-md-6">
@@ -54,11 +53,6 @@
                             <label class="input-group-text text-dark">البريد الالكترونى</label>
                             <input type="email" class="form-control" id="email" name="email"
                                 value="{{ old('email', $setting?->email) }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="input-group-text text-dark">قيمه التوصيل</label>
-                            <input type="text" class="form-control" id="delivery_fees" name="delivery_fees"
-                                value="{{ old('delivery_fees', $setting?->delivery_fees) }}">
                         </div>
                     </div>
                     <div class="mt-2 form-group row">
@@ -87,41 +81,23 @@
                     </div>
 
                     <!-- Start Logo & Favicon & Banner -->
-                    {{--<div class="container p-4 mt-2 bg-white rounded shadow">
+                    <div class="container p-4 mt-2 bg-white rounded shadow">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="p-3 mb-3 text-center border rounded">
                                     <label for="logo" class="form-label fw-bold">الشعار (Logo)</label>
                                     <input class="form-control" type="file" name="logo" id="logoInput"
-                                        accept="image/*">
-                                    @if ($setting->getMediaUrl('logo'))
-                                        <div class="mt-2">
-                                            <img id="logoPreview" src="{{ $setting?->getMediaUrl('logo') }}" alt=""
-                                                width="100"
-                                                style="cursor: pointer; display: {{ $setting->getMediaUrl('logo') ? 'block' : 'none' }};"
-                                                onclick="openImageModal(this.src, 'الشعار (Logo)')">
-                                        </div>
-                                    @endif
+                                        accept="image/*" >
+                                    <img src="{{$logo}}" class="img-fluid" style="max-height: 60px;" />
                                 </div>
                             </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="p-3 mb-3 text-center border rounded">
-                                    <label for="alarm_audio" class="form-label fw-bold">ملف صوتي (Audio)</label>
-                                    <input class="form-control" type="file" name="alarm_audio" id="audioInput" accept="audio/*">
-                                    @if ($setting->getMediaUrl('alarm_audio'))
-                                        <div class="mt-2" id="audioContainer">
-                                            <audio id="audioPreview" controls style="width: 100%;">
-                                                <source src="{{ $setting?->getMediaUrl('alarm_audio') }}">
-                                                المتصفح لا يدعم تشغيل الصوت.
-                                            </audio>
-                                        </div>
-                                    @else
-                                        <div class="mt-2" id="audioContainer" style="display: none;"></div>
-                                    @endif
+                                    <label for="favicon" class="form-label fw-bold">favicon</label>
+                                    <input class="form-control" type="file" name="favicon" id="logoInput" accept="image/*">
+                                    <img src="{{$favicon}}" class="img-fluid" style="max-height: 60px;"/>
                                 </div>
                             </div>
-                        </div>
                         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
@@ -138,7 +114,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>--}}
+                    </div>
 
                     <!-- End Name & alert message -->
                     <hr>

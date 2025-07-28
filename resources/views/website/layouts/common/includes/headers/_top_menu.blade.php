@@ -8,7 +8,7 @@
                             <ul class="parent-nav">
                                 <li class="parent">
                                     <a class="nav-link" href="{{route('home')}}">{{trans('site/site.home_page_title')}}</a>
-                                    
+
                                 </li>
                                 <li class="parent"><a href="#">{{trans('site/site.about_us')}}</a></li>
                                 <li class="parent">
@@ -19,12 +19,6 @@
                         </nav>
                     </div>
                     <!-- button-area -->
-                    <div class="right-btn-area">
-                        <button class="rts-btn btn-primary">
-                            Get 30% Discount Now
-                            <span>Sale</span>
-                        </button>
-                    </div>
                     <!-- button-area end -->
                 </div>
             </div>

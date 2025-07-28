@@ -14,7 +14,7 @@
                 <div class="col-lg-12">
                     <div class="registration-wrapper-1">
                         <div class="logo-area mb--0">
-                            <img class="mb--10" src="{{ asset('assets/images/logo/fav.png') }}" alt="logo">
+                            <img class="mb--10" src="{{ $logo }}" alt="logo">
                         </div>
                         <h3 class="title">Login Into Your Account</h3>
                         <form action="{{ route('auth.login.submit') }}" method="POST" class="registration-form">

@@ -1,34 +1,26 @@
 <?php
 
 namespace App\Providers;
-
-use App\Helpers\AliasHelper;
 use Illuminate\Support\ServiceProvider;
 use App\Models\{Setting};
-use Illuminate\Support\Facades\{View, Cache};
-use App\Models\Concerns\UploadMedia2;
-use App\Services\Contracts\UserInterface;
-use App\Repositories\UserRepository;
-
-class AppServiceProvider extends ServiceProvider
-{
-    use UploadMedia2;
+use Illuminate\Support\Facades\{View, Cache, Schema};
+class AppServiceProvider extends ServiceProvider {
     public function register(): void {}
 
-    public function boot(): void
-    {
-        $settings = Cache::remember('settings', now()->addMinutes(5), function () {
-            //return Setting::with(['media'])->first() ?? new Setting();
-        });
-        $logo = /*$settings->getMediaUrl('logo') ??*/ null;
-        $favicon = /*$settings->getMediaUrl('favicon') ??*/ null;
-        $alarm_audio = /*$settings->getMediaUrl('alarm_audio') ??*/ null;
-        //dd($alarm_audio);
-        View::share([
-            'settings' => $settings,
-            'logo' => $logo,
-            'favicon' => $favicon,
-            'alarm_audio' => $alarm_audio,
-        ]);
+    public function boot(): void {
+        if (Schema::hasTable('settings')) {
+            $settings = Cache::remember('app_settings', 60 * 60, function () {
+                return Setting::with('media')->latest()->first();
+            });
+            if ($settings && $settings->media->isNotEmpty()) {
+                $logo = $settings->getMediaUrl('setting', $settings, null, 'media', 'logo');
+                $favicon = $settings->getMediaUrl('setting', $settings, null, 'media', 'favicon');
+                View::share([
+                    'settings' => $settings,
+                    'logo' => $logo,
+                    'favicon' => $favicon,
+                ]);
+            }
+        }
     }
 }

@@ -7,8 +7,7 @@ namespace App\Models\Concerns;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Facades\Image;
 
-trait UploadMedia2
-{
+trait UploadMedia2 {
     public function uploadSingleMedia(
         $baseFolder,
         UploadedFile $file,
@@ -84,7 +83,7 @@ trait UploadMedia2
         $this->deleteExistingMedia($baseFolder, $model, $column, $relation, $useStorage, $collectionName);
         return $this->uploadSingleMedia($baseFolder, $file, $model, $column, $relation, $useStorage, $generateThumbnail, $collectionName, $addWatermark);
     }
-    
+
     public function deleteExistingMedia($baseFolder, $model, ?string $column, ?string $relation, bool $useStorage, ?string $collectionName)
     {
         $base = "uploads/$baseFolder";
@@ -196,17 +195,13 @@ trait UploadMedia2
     ): ?string {
         if (!$model) return null;
 
-        $base = "uploads/$baseFolder"; // ← تم التعديل هنا فقط
-
-        // لو الصورة محفوظة في عمود مباشر
+        $base = "uploads/$baseFolder";
         if ($column && in_array($column, $model->getFillable())) {
             $fileName = $model->{$column};
             if ($fileName) {
                 return asset("{$base}/{$fileName}");
             }
         }
-
-        // لو من علاقة polymorphic
         if ($relation && method_exists($model, $relation)) {
             $query = $model->$relation();
             if ($collectionName) {
@@ -224,7 +219,6 @@ trait UploadMedia2
                 }
             }
         }
-
         return null;
     }
 }

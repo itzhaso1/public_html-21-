@@ -19,20 +19,20 @@ class MainSettingRepository implements MainSettingInterface
         $this->historyDataTable = $historyDataTable;
     }
 
-    public function index()
-    {
+    public function index() {
         $setting = Setting::with(['media'])->orderBy('created_at', 'DESC')->first();
+        $logo = $setting->getMediaUrl('setting', $setting, null, 'media', 'logo');
+        $favicon = $setting->getMediaUrl('setting', $setting, null, 'media', 'favicon');
         return view('dashboard.admin.settings.index', [
             'title' => 'General Main Settings',
             'setting' => $setting,
+            'logo' => $logo,
+            'favicon' => $favicon,
         ]);
     }
 
-
-    public function save(MainSettingRequest $request)
-    {
-        //try {
-            // dd($request->all());
+    public function save(MainSettingRequest $request) {
+        try {
             $setting = Setting::firstOrNew([]);
             $setting->fill($request->only([
                 'email',
@@ -47,19 +47,15 @@ class MainSettingRepository implements MainSettingInterface
             ]));
             $setting->save();
             if ($request->hasFile('logo'))
-                $setting->updateSingleMedia('setting', $request->file('logo'), $setting, null, 'media', true, 'logo');
+                $setting->updateSingleMedia('setting', $request->file('logo'), $setting, null, 'media', true, false, 'logo');
             if ($request->hasFile('favicon'))
-                $setting->updateSingleMedia('setting', $request->file('favicon'), $setting, null, 'media', true, 'favicon');
-            /*if ($request->hasFile('alarm_audio'))
-                $setting->updateMedia($request->file('alarm_audio'), 'alarm_audio', 'root');*/
+                $setting->updateSingleMedia('setting', $request->file('favicon'), $setting, null, 'media', true, false, 'favicon');
             return redirect()->back()->with('success', 'تم تحديث الإعدادات بنجاح.');
             Cache::forget('settings');
-        /*} catch (\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'حدث خطأ أثناء التحديث: ' . $e->getMessage());
-        }*/
+        }
     }
-
-
 
     public function history(HistoryDataTable $historyDataTable)
     {

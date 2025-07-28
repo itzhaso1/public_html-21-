@@ -15,104 +15,118 @@
             <!--begin::Header-->
             <div class="pt-5 border-0 card-header">
                 <h3 class="card-title align-items-start flex-column">
-                    <span class="mb-1 card-label fw-bolder fs-3">{{ $pageTitle }}</span>
-                    <span class="mt-1 text-muted fw-bold fs-7">عرض تفاصيل الطلب</span>
+                    <span class="mb-1 card-label fw-bolder fs-3">{{ $pageTitle .' (' . $order?->number .')'}}</span>
+                    <span class="mt-1 text-muted fw-bold fs-7"> عرض تفاصيل الطلب</span>
                 </h3>
             </div>
             <!--end::Header-->
             <!--begin::Body-->
             <div class="py-3 card-body">
-                <div class="order-info">
-                    @php
-                    use App\Enums\Order\OrderStatus;
-                    $statusEnum = OrderStatus::tryFrom($order->status);
-                @endphp
-                    <p><strong>رقم الطلب:</strong> {{ $order->order_number }}</p>
-                    @if($statusEnum)
-                        <p>
-                            <strong>حاله الطلب:</strong>
-                            <span class="badge bg-{{ $statusEnum->badgeColor() }}">
-                                {{ $statusEnum->label() }}
-                            </span>
-                        </p>
-                    @else
-                        <p><strong>حاله الطلب:</strong><span class="badge bg-secondary">غير معروفة</span></p>
-                    @endif
-                    <p>
-                        <strong>طريقة الدفع:</strong>
-                        <span class="badge bg-{{ $order?->payment_type?->badgeColor() }}">
-                            {{ $order?->payment_type?->label() }}
-                        </span>
-                    </p>
-                    <p><strong>حالة الدفع:</strong> {{ ucfirst($order->payment_status) }}</p>
-
-
-                @if($order->order_location)
-                    <p>
-                        <strong>موقع الطلب:</strong>
-                        <a href="{{ $order->order_location }}" target="_blank" class="btn btn-sm btn-primary">
-                            افتح الموقع
-                        </a>
-
-                        <button class="btn btn-sm btn-secondary" onclick="copyToClipboard('{{ $order->order_location }}')">
-                            نسخ الرابط
-                        </button>
-                    </p>
-                @else
-                    <p><strong>موقع الطلب:</strong> غير متوفر</p>
-                @endif
-                    <p><strong>نوع الطلب:</strong> {{ $order->deliveryType() }}</p>
-                    <p><strong>السعر الإجمالي:</strong> {{ number_format($order->total_price, 2) }} SAR</p>
+                <!-- Start Accordion -->
+                <div class="accordion" id="orderAccordion">
+                
+                    {{-- بيانات العميل والحالة --}}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCustomer">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCustomer"
+                                aria-expanded="true">
+                                بيانات العميل والحالة
+                            </button>
+                        </h2>
+                        <div id="collapseCustomer" class="accordion-collapse collapse show" data-bs-parent="#orderAccordion">
+                            <div class="accordion-body">
+                                <p><strong>العميل:</strong> {{ $order->user->name }}</p>
+                                <p><strong>الحالة:</strong>
+                                    <span class="badge bg-{{ $statusColors[$order->status]['color'] ?? 'secondary' }}">
+                                        {{ $statusColors[$order->status]['text'] ?? $order->status }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    {{-- تفاصيل الطلب --}}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingDetails">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseDetails">
+                                تفاصيل الطلب
+                            </button>
+                        </h2>
+                        <div id="collapseDetails" class="accordion-collapse collapse" data-bs-parent="#orderAccordion">
+                            <div class="accordion-body">
+                                <p><strong>الإجمالي:</strong> {{ number_format($order->total_price, 2) }} ر.س</p>
+                                <p><strong>الكوبون:</strong> {{ $order->coupon?->code ?? 'لا يوجد' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    {{-- المنتجات --}}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingProducts">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseProducts">
+                                المنتجات
+                            </button>
+                        </h2>
+                        <div id="collapseProducts" class="accordion-collapse collapse" data-bs-parent="#orderAccordion">
+                            <div class="accordion-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>الصورة</th>
+                                            <th>المنتج</th>
+                                            <th>السعر</th>
+                                            <th>الكمية</th>
+                                            <th>التصنيف</th>
+                                            <th>القسم</th>
+                                            <th>العلامة التجارية</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($order->products as $product)
+                                        <tr>
+                                            <td>
+                                                <img src="{{ $product->getMediaUrl('product', $product, null, 'media', 'product') }}" alt="Product Image"
+                                                    style="width: 60px; height: 60px; object-fit: cover;">
+                                            </td>
+                                            <td>{{ $product->pivot->product_name ?? $product->name }}</td>
+                                            <td>{{ number_format($product->pivot->product_price, 2) }} ر.س</td>
+                                            <td>{{ $product->pivot->quantity }}</td>
+                                            <td>{{ $product->category?->name ?? '—' }}</td>
+                                            <td>
+                                                @foreach($product->sections as $section)
+                                                <span class="badge bg-info">{{ $section->name }}</span>
+                                                @endforeach
+                                            </td>
+                                            <td>{{ $product->brand?->name ?? '—' }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
+                    {{-- العناوين --}}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingAddresses">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseAddresses">
+                                العناوين
+                            </button>
+                        </h2>
+                        <div id="collapseAddresses" class="accordion-collapse collapse" data-bs-parent="#orderAccordion">
+                            <div class="accordion-body">
+                                @foreach($order->addresses as $address)
+                                <p><strong>{{ $address->type }}:</strong> {{ $address->first_name }} {{ $address->last_name }} - {{
+                                    $address->city }}, {{ $address->country }} - {{ $address->phone }}</p>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="user-info">
-                    <h3>معلومات العميل:</h3>
-                    <p><strong>الاسم:</strong> {{ $order->user->name }}</p>
-                    <p><strong>البريد الإلكتروني:</strong> {{ $order->user->email }}</p>
-                    <p><strong>رقم الهاتف:</strong> {{ $order->user->phone ?? 'غير متوفر' }}</p>
-                </div>
-
-                <div class="products">
-                    <h3>المنتجات في الطلب:</h3>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>اسم المنتج</th>
-                                <th>الكمية</th>
-                                <th>السعر</th>
-                                <th>الحجم</th>
-                                <th>النوع</th>
-                                <th>الإضافات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($order->products as $product)
-                                <tr>
-                                    <td>{{ $product->name }}</td>
-                                    <td>{{ $product->pivot->quantity }}</td>
-                                    <td>{{ number_format($product->pivot->price, 2) }} SAR</td>
-                                    <td>{{ optional($product->pivot->detail?->size)->name ?? 'N/A' }}</td>
-                                    <td>{{ optional($product->pivot->detail?->type)->name ?? 'N/A' }}</td>
-                                    <td>
-                                        @if ($product->pivot->extras)
-                                            @foreach ($product->pivot->extras as $extra)
-                                                <p>{{ $extra->extra->name }} - {{ $extra->quantity }} x
-                                                    {{ number_format($extra->price, 2) }} SAR</p>
-                                            @endforeach
-                                        @else
-                                            لا توجد إضافات
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="order-actions">
-                    {{-- <a href="{{ route('general.orders.edit', $order->id) }}" class="btn btn-warning">تعديل الطلب</a> --}}
-                    <a href="{{ route('general.orders.index') }}" class="btn btn-secondary">الرجوع إلى الطلبات</a>
-                </div>
+                <!-- End Accordion -->
             </div>
             <!--end::Body-->
         </div>
@@ -121,22 +135,4 @@
 
 @push('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script>
-    function copyToClipboard(text) {
-        try {
-            const tempInput = document.createElement("input");
-            tempInput.classList.add('temp-input');
-            tempInput.style.position = "absolute";
-            tempInput.style.left = "-9999px";
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            toastr.success("تم نسخ الرابط!", "نجاح");
-        } catch (error) {
-            toastr.error("فشل في نسخ الرابط. حاول مرة أخرى.", "خطأ");
-        }
-    }
-</script>
 @endpush

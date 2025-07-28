@@ -16,8 +16,7 @@ class BrandDataTable extends BaseDataTable
         $this->request = $request;
     }
 
-    public function dataTable($query): EloquentDataTable
-    {
+    public function dataTable($query): EloquentDataTable {
         return (new EloquentDataTable($query))
             ->addColumn('action', function (Brand $brand) {
                 return view('dashboard.admin.brands.btn.actions', compact('brand'));
