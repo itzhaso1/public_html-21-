@@ -10,11 +10,11 @@
                                     <a class="nav-link" href="{{route('home')}}">{{trans('site/site.home_page_title')}}</a>
 
                                 </li>
-                                <li class="parent"><a href="#">{{trans('site/site.about_us')}}</a></li>
+                                <li class="parent"><a href="{{route('about')}}">{{trans('site/site.about_us')}}</a></li>
                                 <li class="parent">
                                     <a href="{{route('shop.index')}}">{{trans('site/site.shop')}}</a>
                                 </li>
-                                <li class="parent"><a href="#">{{trans('site/site.contact_us')}}</a></li>
+                                <li class="parent"><a href="{{route('contact')}}">{{trans('site/site.contact_us')}}</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -24,8 +24,8 @@
             </div>
             <div class="col-lg-12">
                 <div class="logo-search-category-wrapper after-md-device-header">
-                    <a href="index.html" class="logo-area">
-                        <img src="assets/images/logo/logo-01.svg" alt="logo-main" class="logo">
+                    <a href="{{route('home')}}" class="logo-area">
+                        <img src="{{--$logo--}}" alt="{{--$settings?->name--}}" class="logo">
                     </a>
                     <div class="category-search-wrapper">
                         <div class="category-btn category-hover-header">
@@ -124,93 +124,8 @@
                                 Wishlist
                             </a>
                             <div class="btn-border-only cart category-hover-header">
-                                <i class="fa-sharp fa-regular fa-cart-shopping"></i>
-                                <span>My Cart</span>
-                                <div class="category-sub-menu card-number-show">
-                                    <h5 class="shopping-cart-number">Shopping Cart (03)</h5>
-                                    <div class="cart-item-1 border-top">
-                                        <div class="img-name">
-                                            <div class="thumbanil">
-                                                <img src="assets/images/shop/cart-1.png" alt="">
-                                            </div>
-                                            <div class="details">
-                                                <a href="shop-details.html">
-                                                    <h5 class="title">Foster Farms Breast Nuggets Shaped Chicken
-                                                    </h5>
-                                                </a>
-                                                <div class="number">
-                                                    1 <i class="fa-regular fa-x"></i>
-                                                    <span>$36.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="close-c1">
-                                            <i class="fa-regular fa-x"></i>
-                                        </div>
-                                    </div>
-                                    <div class="cart-item-1">
-                                        <div class="img-name">
-                                            <div class="thumbanil">
-                                                <img src="assets/images/shop/05.png" alt="">
-                                            </div>
-                                            <div class="details">
-                                                <a href="shop-details.html">
-                                                    <h5 class="title">Foster Farms Breast Nuggets Shaped Chicken
-                                                    </h5>
-                                                </a>
-                                                <div class="number">
-                                                    1 <i class="fa-regular fa-x"></i>
-                                                    <span>$36.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="close-c1">
-                                            <i class="fa-regular fa-x"></i>
-                                        </div>
-                                    </div>
-                                    <div class="cart-item-1">
-                                        <div class="img-name">
-                                            <div class="thumbanil">
-                                                <img src="assets/images/shop/04.png" alt="">
-                                            </div>
-                                            <div class="details">
-                                                <a href="shop-details.html">
-                                                    <h5 class="title">Foster Farms Breast Nuggets Shaped Chicken
-                                                    </h5>
-                                                </a>
-                                                <div class="number">
-                                                    1 <i class="fa-regular fa-x"></i>
-                                                    <span>$36.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="close-c1">
-                                            <i class="fa-regular fa-x"></i>
-                                        </div>
-                                    </div>
-                                    <div class="sub-total-cart-balance">
-                                        <div class="bottom-content-deals mt--10">
-                                            <div class="top">
-                                                <span>Sub Total:</span>
-                                                <span class="number-c">$108.00</span>
-                                            </div>
-                                            <div class="single-progress-area-incard">
-                                                <div class="progress">
-                                                    <div class="progress-bar wow fadeInLeft" role="progressbar"
-                                                        style="width: 80%" aria-valuenow="25" aria-valuemin="0"
-                                                        aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                            <p>Spend More <span>$125.00</span> to reach <span>Free
-                                                    Shipping</span></p>
-                                        </div>
-                                        <div class="button-wrapper d-flex align-items-center justify-content-between">
-                                            <a href="cart.html" class="rts-btn btn-primary ">View Cart</a>
-                                            <a href="checkout.html" class="rts-btn btn-primary border-only">CheckOut</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="cart.html" class="over_link"></a>
+                                <x-cart-menu />
+                                <a href="{{route('cart')}}" class="over_link"></a>
                             </div>
                         </div>
                         <div class="actions-area">
@@ -241,3 +156,5 @@
         </div>
     </div>
 </div>
+
+

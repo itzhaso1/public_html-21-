@@ -31,7 +31,7 @@ class AboutController extends Controller {
             $about = About::create($data);
         }
         if ($request->hasFile('about'))
-            $about->uploadSingleMedia('about', $request->file('about'), $about, null, 'media', true);
+            $about->updateSingleMedia('about', $request->file('about'), $about, null, 'media', true);
         return redirect()->back()->with('success', 'تم الحفظ بنجاح');
     }
 }

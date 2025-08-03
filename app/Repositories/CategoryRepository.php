@@ -7,16 +7,14 @@ use App\Services\Contracts\CategoryInterface;
 use Illuminate\Http\Request;
 use App\DataTables\Dashboard\Admin\CategoryDataTable;
 use Illuminate\Support\Facades\DB;
-
-class CategoryRepository implements CategoryInterface
-{
-    public function index(CategoryDataTable $categoryDataTable)
-    {
+use App\Imports\CategoryImport;
+use Maatwebsite\Excel\Facades\Excel;
+class CategoryRepository implements CategoryInterface {
+    public function index(CategoryDataTable $categoryDataTable) {
         return $categoryDataTable->render('dashboard.admin.categories.index', ['pageTitle' => 'التصنيفات']);
     }
 
-    public function create()
-    {
+    public function create() {
         $categories = Category::getCategoryOptions();
         return view('dashboard.admin.categories.create', [
             'pageTitle' => 'إضافة تصنيف',
@@ -56,8 +54,7 @@ class CategoryRepository implements CategoryInterface
         }
     }
 
-    public function edit(Category $category)
-    {
+    public function edit(Category $category) {
         $category->load('media');
         $categories = Category::getCategoryOptions();
         return view('dashboard.admin.categories.edit', [
@@ -99,8 +96,7 @@ class CategoryRepository implements CategoryInterface
         }
     }
 
-    public function destroy(Category $category)
-    {
+    public function destroy(Category $category) {
         $subCategories = Category::where('parent_id', $category->id)->get();
         if ($subCategories->isNotEmpty()) {
             $subCategoryNames = $subCategories->pluck('name')->implode(', ');
@@ -109,5 +105,13 @@ class CategoryRepository implements CategoryInterface
         $category->deleteExistingMedia('category', $category, null, 'media', true, 'category');
         $category->delete();
         return redirect()->route('admin.categories.index')->with('success', 'تم الحذف بنجاح!');
+    }
+
+    public function import(Request $request) {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls']
+        ]);
+        Excel::import(new CategoryImport, $request->file('file'));
+        return redirect()->back()->with('success', 'تم استيراد التصنيفات بنجاح');
     }
 }

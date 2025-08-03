@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="logo-search-category-wrapper">
-                    <a href="index.html" class="logo-area">
+                    <a href="{{route('home')}}" class="logo-area">
                         <img src="{{$logo}}" alt="logo-main" class="logo" style="max-width: 100px; height: auto;">
                     </a>
                     <div class="category-search-wrapper">
@@ -70,7 +70,7 @@
                             <span>{{ trans('site/site.my_account') }}</span>
                         </a>--}}
                         @auth
-                        <a href="{{-- route('account.dashboard') --}}" class="btn-border-only account">
+                        <a href="{{ route('customer.dashboard') }}" class="btn-border-only account">
                             <i class="fa-light fa-user"></i>
                             <span>{{ Auth::user()->name }}</span>
                         </a>
@@ -94,3 +94,4 @@
         </div>
     </div>
 </div>
+

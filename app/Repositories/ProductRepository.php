@@ -184,7 +184,6 @@ class ProductRepository implements ProductInterface {
     private function extractData(Request $request)
     {
         $data = $request->only([
-            'slug',
             'category_id',
             'brand_id',
             'type_id',
@@ -194,6 +193,7 @@ class ProductRepository implements ProductInterface {
             'sku',
             'status',
             'featured',
+            'slug'
         ]);
 
         // نضيف قيمة الـ featured كـ boolean

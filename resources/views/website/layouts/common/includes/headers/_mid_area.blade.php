@@ -5,7 +5,7 @@
                 <div class="header-mid-wrapper-between">
                     <div class="nav-sm-left">
                         <ul class="nav-h_top">
-                            <li><a href="about.html">{{ trans('site/site.about_us') }}</a></li>
+                            <li><a href="{{route('about')}}">{{ trans('site/site.about_us') }}</a></li>
                             <li><a href="#">{{ trans('site/site.my_account') }}</a></li>
                         </ul>
                         <p class="para">{{ trans('site/site.we_delivery_to_your_everyday_from') }} 7:00 {{ trans('site/site.we_delivery_to_your_everyday_to') }} 22:00</p>

@@ -195,6 +195,7 @@
                         <!-- Start SubCategory Swiper Filter -->
                         <div class="position-relative">
                             <!-- Swiper Container -->
+                            @if($subcategories && $subcategories->isNotEmpty())
                             <div class="swiper subcategory-swiper mb-4">
                                 <div class="swiper-wrapper">
                                     @foreach($subcategories as $subcategory)
@@ -209,11 +210,12 @@
                                     </div>
                                     @endforeach
                                 </div>
-                            
+
                                 {{-- الأسهم --}}
                                 <div class="swiper-button-prev"></div>
                                 <div class="swiper-button-next"></div>
                             </div>
+                            @endif
                         </div>
                         <!-- End SubCategory Swiper Filter -->
                         <div class="product-area-wrapper-shopgrid-list mt--20 tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">

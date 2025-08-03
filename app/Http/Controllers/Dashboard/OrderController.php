@@ -46,6 +46,7 @@ class OrderController extends Controller {
             'user',
             'coupon',
             'addresses',
+            'products',
             'products.category',
             'products.brand',
             'products.sections'
@@ -57,7 +58,7 @@ class OrderController extends Controller {
             'delivering'  => ['text' => 'جارِ التوصيل', 'color' => 'warning'],
             'completed'   => ['text' => 'مكتمل', 'color' => 'success'],
         ];
-
+        //dd($order->products);
         return view('dashboard.general.orders.show', [
             'order' => $order,
             'statusColors' => $statusColors, 

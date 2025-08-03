@@ -49,10 +49,6 @@ class SliderRepository implements SliderInterface
 
     public function update(Request $request, Slider $slider) {
         $request->validate([
-            'ar.name' => 'required|string|max:255',
-            'ar.description' => 'nullable|string',
-            'en.name' => 'required|string|max:255',
-            'en.description' => 'nullable|string',
             'slider' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
         DB::beginTransaction();

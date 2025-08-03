@@ -22,7 +22,7 @@ class   OrderDataTable extends BaseDataTable {
                 return view('dashboard.general.orders.btn.actions', compact('order'));
             })
             ->addColumn('user_name', function (Order $order) {
-                return $order->user->name;
+                return $order->customer_name;
             })
             ->editColumn('status', function (Order $order) {
                 $statuses = [
@@ -93,7 +93,7 @@ class   OrderDataTable extends BaseDataTable {
             ->editColumn('updated_at', function (Order $order) {
                 return $this->formatBadge($this->formatDate($order->updated_at));
             })
-            ->rawColumns(['actions', 'coupon_code', 'product_count', 'created_at', 'updated_at', 'status', 'payment_status', 'payment_type']);
+            ->rawColumns(['user_name','actions', 'coupon_code', 'product_count', 'created_at', 'updated_at', 'status', 'payment_status', 'payment_type']);
     }
     
     public function query(): QueryBuilder {

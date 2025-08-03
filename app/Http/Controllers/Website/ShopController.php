@@ -9,7 +9,17 @@ class ShopController extends Controller {
     public function index(Request $request) {
         $products = Product::query()->with(['translations', 'media']);
         if ($request->filled('category_id')) {
-            $products->where('category_id', $request->category_id);
+            $categoryId = $request->category_id;
+            $baseProducts = Product::where('category_id', $categoryId)->get();
+            if ($baseProducts->count() <= 3) {
+                $subCategoryIds = Category::where('parent_id', $categoryId)->pluck('id')->toArray();
+                $products->whereIn('category_id', array_merge([$categoryId], $subCategoryIds));
+            } else {
+                $products->where('category_id', $categoryId);
+            }
+            $subcategories = Category::where('parent_id', $categoryId)->with(['translations', 'media'])->get();
+        } else {
+            $subcategories = Category::with(['translations', 'media'])->get();
         }
         if ($request->filled('brand_id')) {
             $products->where('brand_id', $request->brand_id);
@@ -22,7 +32,7 @@ class ShopController extends Controller {
         }
         $products = $products->latest()->paginate(12);
         $categories = Category::with('translations')->get();
-        $subcategories = Category::whereNotNull('parent_id')->with(['translations', 'media'])->get();
+        //$subcategories = Category::whereNotNull('parent_id')->with(['translations', 'media'])->get();
         $brands = Brand::all();
         $pageTitle = trans('site/site.shop');
         return view('website.pages.shop', compact('products', 'categories', 'brands', 'pageTitle', 'subcategories'))->with([

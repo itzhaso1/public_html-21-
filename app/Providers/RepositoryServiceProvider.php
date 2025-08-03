@@ -47,8 +47,8 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\MainSettingRepository'
         );
         $this->app->bind(
-            'App\Services\Contracts\PageInterface',
-            'App\Repositories\PageRepository'
+            'App\Services\Contracts\AboutCounterInterface',
+            'App\Repositories\AboutCounterRepository'
         );
         $this->app->bind(
             'App\Services\Contracts\SliderInterface',

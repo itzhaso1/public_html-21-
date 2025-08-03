@@ -61,10 +61,10 @@ class CheckoutController extends Controller {
         } else {
             $discountedTotal = $this->cartInterface->total();
         }
-        try {
+        //try {
             DB::beginTransaction();
             $order = Order::create([
-            'user_id' => auth()->user()->id,
+            'user_id' => auth()?->user()?->id,
                 'payment_type' => 'cash_on_delivery',
                 'status' => 'pending',
                 'payment_status' => 'pending',
@@ -90,9 +90,9 @@ class CheckoutController extends Controller {
             return redirect()->route('shop.index')->with([
                 'success' => trans('site/site.product_add_successfully')
             ]);
-        } catch (\Exception $e) {
+        /*} catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', '!حدث خطأ ما');
-        }
+        }*/
     }
 }

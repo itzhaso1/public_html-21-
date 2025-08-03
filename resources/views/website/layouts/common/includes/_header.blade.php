@@ -14,12 +14,9 @@
     <button class="close-icon-menu"><i class="far fa-times"></i></button>
 
 
-    <form action="#" class="search-input-area-menu mt--30">
-        <input type="text" placeholder="Search..." required>
-        <button><i class="fa-light fa-magnifying-glass"></i></button>
-    </form>
+    
 
-    <div class="mobile-menu-nav-area tab-nav-btn mt--20">
+    {{--<div class="mobile-menu-nav-area tab-nav-btn mt--20">
 
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -220,26 +217,85 @@
             </div>
         </div>
 
+    </div>--}}
+    <div class="mobile-menu-nav-area tab-nav-btn mt--20">
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                    type="button" role="tab" aria-controls="nav-home" aria-selected="true">القائمه</button>
+                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">الفئات</button>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
+                tabindex="0">
+                <!-- mobile menu area start -->
+                <div class="mobile-menu-main">
+                    <nav class="nav-main mainmenu-nav mt--30">
+                        <ul class="mainmenu metismenu" id="mobile-menu-active">
+                            <li>
+                                <a class="main" href="{{route('home')}}">{{trans('site/site.home_page_title')}}</a>
+                            </li>
+                            <li>
+                                <a href="{{route('about')}}">{{trans('site/site.about_us')}}</a>
+                            </li>
+                            <li>
+                                <a href="{{route('shop.index')}}" class="main">{{trans('site/site.shop')}}</a>
+                            </li>
+                            <li>
+                                <a href="{{route('contact')}}" class="main">{{trans('site/site.contact_us')}}</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+                <!-- mobile menu area end -->
+            </div>
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                <div class="category-btn category-hover-header menu-category">
+                    <ul class="category-sub-menu" id="category-active-menu">
+                        @foreach($categories as $category)
+                        <li>
+                            <a href="#" class="menu-item">
+                                <img src="{{ $category->getMediaUrl('category', $category, null, 'media', 'category') ?? asset('assets/images/icons/default.svg') }}"
+                                    style="max-width: 25px; max-height: 25px; object-fit: cover; border-radius: 5px;" alt="{{$category->name}}">
+                                <span>{{ $category->name }}</span>
+                                @if($category->children->isNotEmpty())
+                                <i class="fa-regular fa-plus"></i>
+                                @endif
+                            </a>
+                            @if($category->children->isNotEmpty())
+                            <ul class="submenu mm-collapse">
+                                @foreach($category->children as $sub)
+                                <li><a class="mobile-menu-link" href="{{ route('shop.index', ['category_id' => $category->id]) }}">{{ $sub->name
+                                        }}</a></li>
+                                @endforeach
+                            </ul>
+                            @endif
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- button area wrapper start -->
     <div class="button-area-main-wrapper-menuy-sidebar mt--50">
         <div class="contact-area">
             <div class="phone">
                 <i class="fa-light fa-headset"></i>
-                <a href="#">02345697871</a>
-            </div>
-            <div class="phone">
-                <i class="fa-light fa-envelope"></i>
-                <a href="#">02345697871</a>
+                <a href="#">{{--$settings?->phone--}}</a>
             </div>
         </div>
         <div class="buton-area-bottom">
-            <a href="login.html" class="rts-btn btn-primary">Sign In</a>
-            <a href="register.html" class="rts-btn btn-primary">Sign Up</a>
+            <a href="{{route('auth.login')}}" class="rts-btn btn-primary">تسجيل الدخول</a>
+            <a href="{{route('auth.register')}}" class="rts-btn btn-primary">مستخدم جديد</a>
         </div>
     </div>
-    <!-- button area wrapper end -->
 
 </div>
 <!-- header style two End -->

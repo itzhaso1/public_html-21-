@@ -52,7 +52,7 @@
                                             ' / ' . $lang['native']}}</label>
                                         <input type="text" id="{{$key}}[name]" name="{{$key}}[name]"
                                             placeholder="{{trans('dashboard/category.category_name_placeholder') . ' / ' . $lang['native']}}"
-                                            class="form-control" required>
+                                            class="form-control">
                                     </div>
                                     <div class="col-md-8">
                                         <label for="{{$key}}[description]" class="form-label">{{trans('dashboard/category.description') . '

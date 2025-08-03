@@ -56,16 +56,14 @@ class AuthController extends Controller {
             'phone'    => 'required|string|max:20|unique:users,phone',
             'password' => 'required|string|min:6',
         ]);
-
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
+            'status'   => 'active',
         ]);
-
         Auth::login($user);
-
         return redirect()->route('home');
     }
 

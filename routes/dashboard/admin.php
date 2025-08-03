@@ -22,22 +22,28 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['lo
         Route::resource('admins', Dashboard\AdminController::class);
         Route::get('/link-password', [Dashboard\AdminController::class, 'showForm'])->name('link_password.form');
         Route::post('/link-password', [Dashboard\AdminController::class, 'verify'])->name('link_password.verify');
-        Route::middleware(['linkPasswordProtected'])->controller(Dashboard\MainSettingsController::class)->prefix('mainSettings')->as('mainSettings.')->group(function () {
+        Route::/*middleware(['linkPasswordProtected'])->*/controller(Dashboard\MainSettingsController::class)->prefix('mainSettings')->as('mainSettings.')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('store', 'store')->name('store');
             Route::get('histories', 'history')->name('histories');
         });
         Route::resource('categories', Dashboard\CategoryController::class);
+        Route::post('categories/import', [Dashboard\CategoryController::class, 'import'])->name('categories.import');
         Route::resource('products', Dashboard\ProductController::class);
         Route::resource('sliders', Dashboard\SliderController::class);
+        Route::resource('aboutCounters', Dashboard\AboutCounterController::class);
         Route::resource('sections', Dashboard\SectionController::class);
         Route::resource('brands', Dashboard\BrandController::class);
         Route::resource('types', Dashboard\TypeController::class);
         Route::resource('tags', Dashboard\TagController::class);
         Route::resource('coupons', Dashboard\CouponController::class);
-        
+
         Route::get('about/create', [Dashboard\AboutController::class, 'create'])->name('about.create');
         Route::post('about/store', [Dashboard\AboutController::class, 'store'])->name('about.store');
+        Route::get('contact/create', [Dashboard\ContactUsController::class, 'create'])->name('contact.create');
+        Route::post('contact/store', [Dashboard\ContactUsController::class, 'store'])->name('contact.store');
+
+        Route::resource('privacy', Dashboard\PrivacyController::class);
 
         Route::resource('users', Dashboard\UserController::class)->names('user');
         Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {

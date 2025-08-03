@@ -2,6 +2,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 class Order extends Model {
     use HasFactory;
     protected $fillable = ['user_id', 'status', 'number', 'payment_status', 'payment_type', 'total_price', 'coupon_id'];
@@ -9,6 +10,18 @@ class Order extends Model {
         return $this->belongsTo(User::class)->withDefault([
             'name'=>'Guest Customer'
         ]);
+    }
+
+    protected function customerName(): Attribute {
+        return Attribute::get(function () {
+            if ($this->user_id) {
+                return $this->user->name;
+            }
+            $address = $this->addresses->first();
+            $fullName = $address ? ucwords($address->first_name . ' ' . $address->last_name) : '';
+            $styledName = $fullName ? ' -<br> <span class="text-primary">' . $fullName . '</span>' : '';
+            return 'Guest Customer' . $styledName;
+        });
     }
 
     public function coupon() {
@@ -25,6 +38,11 @@ class Order extends Model {
             'options'
         ]);
     }
+
+    public function orderItems() {
+        return $this->hasMany(OrderItem::class);
+    }
+
 
     public function addresses() {
         return $this->hasMany(OrderAddress::class);

@@ -23,7 +23,7 @@
                         </div>
                         <div class="single-input">
                             <label for="email">Email Address*</label>
-                            <input id="email" name="addr[billing][email]" type="text" required />
+                            <input id="email" name="addr[billing][email]" type="text" />
                         </div>
                         <div class="half-input-wrapper">
                             <div class="single-input">
@@ -35,7 +35,7 @@
                                 <input id="l-name" name="addr[billing][last_name]" type="text" />
                             </div>
                         </div>
-                        <div class="single-input">
+                        {{--<div class="single-input">
                             <label for="country">Country</label>
                             <input id="country" name="addr[billing][country]" type="text" />
                         </div>
@@ -46,7 +46,7 @@
                         <div class="single-input">
                             <label for="state">State*</label>
                             <input id="state" name="addr[billing][state]" type="text" />
-                        </div>
+                        </div>--}}
                         <div class="single-input">
                             <label for="street">Street Address*</label>
                             <input name="addr[billing][street]" type="text" required />
@@ -59,12 +59,12 @@
                             <label for="ordernotes">Order Notes*</label>
                             <textarea name="addr[billing][order_notes]" id="ordernotes"></textarea>
                         </div>
-                        @if(auth()->check()) 
+                        {{--@if(auth()->check()) --}} 
                                 <button type="submit" class="rts-btn btn-primary">Place Order</button>
-                            @else 
+                            {{--@else 
                                 <a link="{{route('auth.login')}}" class="rts-btn btn-primary">قم بتسجيل الدخول لاتمام عمليه الشراء</a>
                             
-                        @endif
+                        @endif--}}
                     </form>
                 </div>
                 <!-- End Billing -->

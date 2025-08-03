@@ -21,13 +21,13 @@ class ProductDataTable extends BaseDataTable {
                 return view('dashboard.admin.products.btn.actions', compact('product'));
             })
             ->editColumn('product', function (Product $product) {
-                return '<img src="' . $product->getMediaUrl('product', $product, null, 'media', 'product') . '" class="img-fluid" alt="' . $product->name . '" style="max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 5px;"/>';
+                return '<img src="' . $product->getMediaUrl('product', $product, null, 'media', 'product') . '" class="img-fluid" alt="' . $product?->name . '" style="max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 5px;"/>';
             })
             ->addColumn('category', function (Product $product) {
-                return $product->category->name;
+                return $product?->category?->name;
             })
             ->addColumn('brand', function (Product $product) {
-                return $product->brand->name;
+                return $product?->brand?->name;
             })
             /*->addColumn('type', function (Product $product) {
             if ($product->types->isEmpty()) return '<span class="text-muted">لا يوجد</span>';

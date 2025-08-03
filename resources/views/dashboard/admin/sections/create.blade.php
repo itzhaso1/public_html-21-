@@ -70,10 +70,10 @@
                         </div>
                     </div>
                     </br>
-                    <div class="row mt-4">
+                    <div class="mt-4 row">
                         <div class="col-md-4">
                             <label for="product_ids" class="form-label">اختر المنتجات</label>
-                            <select name="product_ids[]" id="product_ids" class="form-select" multiple required>
+                            <select name="product_ids[]" id="product_ids" class="form-select" multiple>
                                 @foreach(App\Models\Product::all() as $product)
                                 <option value="{{ $product->id }}">{{ $product->name }}</option>
                                 @endforeach

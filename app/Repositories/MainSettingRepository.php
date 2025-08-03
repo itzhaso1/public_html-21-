@@ -21,8 +21,8 @@ class MainSettingRepository implements MainSettingInterface
 
     public function index() {
         $setting = Setting::with(['media'])->orderBy('created_at', 'DESC')->first();
-        $logo = $setting->getMediaUrl('setting', $setting, null, 'media', 'logo');
-        $favicon = $setting->getMediaUrl('setting', $setting, null, 'media', 'favicon');
+        $logo = $setting?->getMediaUrl('setting', $setting, null, 'media', 'logo') ?? asset('assets/default/default.jpg');
+        $favicon = $setting?->getMediaUrl('setting', $setting, null, 'media', 'favicon') ?? asset('assets/default/default.jpg');
         return view('dashboard.admin.settings.index', [
             'title' => 'General Main Settings',
             'setting' => $setting,
