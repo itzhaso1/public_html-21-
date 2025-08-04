@@ -79,6 +79,8 @@ return [
     'coupon' => 'الكوبون',
     'orders_list' => 'قائمه طلبات',
     'processes' => 'العمليات',
+    'dashboard' => 'الاحصائيات',
+    'order_tracking' => 'تتبع الطلبات',
     'products_count' => 'عدد المنتاجات',
     'payment_methods' => [
         'cash_on_delivery' => 'الدفع عند الاستلام',

@@ -34,8 +34,7 @@ class DashboardController extends Controller {
         if ($status && $status != 'total') {
             $query->where('status', $status);
         }
-        $orders = $query->with(['coupon'])->latest()->paginate(5);
-
+        $orders = $query->with(['coupon', 'products'])->latest()->paginate(5);
         return response()->json([
             'data' => $orders->items(),
             'links' => (string) $orders->links('pagination::bootstrap-5'),
@@ -43,7 +42,6 @@ class DashboardController extends Controller {
     }
 
     public function showPartial(Order $order) {
-        \Log::info('Order ID:', ['id' => $order->id]);
         $order->load([
             'user',
             'coupon',
@@ -66,6 +64,78 @@ class DashboardController extends Controller {
                 'statusColors' => $statusColors,
                 'pageTitle' => 'تفاصيل الطلب'
             ])->render()
+        ]);
+    }
+
+    /*public function trackOrder(Request $request) {
+        $order = Order::where('number', $request->number)->first();
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'رقم الطلب غير موجود'
+            ], 404);
+        }
+        $statusColors = [
+            'pending' => 'bg-warning',
+            'processing' => 'bg-primary',
+            'delivering' => 'bg-info',
+            'completed' => 'bg-success',
+        ];
+        $statusTexts = [
+            'pending' => 'قيد الانتظار',
+            'processing' => 'جاري التجهيز',
+            'delivering' => 'جاري التوصيل',
+            'completed' => 'تم التسليم',
+        ];
+        $color = $statusColors[$order->status] ?? 'bg-secondary';
+        $statusText = $statusTexts[$order->status] ?? 'غير معروف';
+        $html = view('website.customer.order_status_card', compact('order', 'color', 'statusText'))->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+        
+    }*/
+    public function trackOrder(Request $request)
+    {
+        $order = Order::where('number', $request->number)
+            ->where('user_id', auth()->id())    
+            ->with([
+                'user',
+                'coupon',
+                'addresses',
+                'products.category',
+                'products.brand',
+                'products.sections'
+            ])
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'رقم الطلب غير موجود'
+            ], 404);
+        }
+
+        $statusColors = [
+            'pending' => 'bg-warning',
+            'processing' => 'bg-primary',
+            'delivering' => 'bg-info',
+            'completed' => 'bg-success',
+        ];
+        $statusTexts = [
+            'pending' => 'قيد الانتظار',
+            'processing' => 'جاري التجهيز',
+            'delivering' => 'جاري التوصيل',
+            'completed' => 'تم التسليم',
+        ];
+        $color = $statusColors[$order->status] ?? 'bg-secondary';
+        $statusText = $statusTexts[$order->status] ?? 'غير معروف';
+        $html = view('website.customer.order_status_card', compact('order', 'color', 'statusText'))->render();
+        return response()->json([
+            'success' => true,
+            'html' => $html
         ]);
     }
 }

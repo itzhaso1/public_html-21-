@@ -38,11 +38,13 @@
                     <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
                         data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
                         aria-selected="true">
-                        <i class="fa-regular fa-chart-line"></i>Dashboard
+                        <i class="fa-regular fa-chart-line"></i>
+                        {{trans('site/site.dashboard')}}
                     </button>
-                    <button class="nav-link" id="v-pills-order-track-tab" data-bs-toggle="pill" data-bs-target="#v-pills-order-track" type="button"
-                        role="tab" aria-controls="v-pills-order-track" aria-selected="true">
-                        <i class="fa-regular fa-tractor"></i>Order Track
+                    <button class="nav-link" id="v-pills-tracking-tab" data-bs-toggle="pill" data-bs-target="#v-pills-tracking"
+                        type="button" role="tab" aria-controls="v-pills-tracking" aria-selected="false">
+                        <i class="fa-regular fa-truck-fast"></i>
+                        {{trans('site/site.order_tracking')}}
                     </button>
                 </div>
             </div>
@@ -51,8 +53,7 @@
             <div class="col-lg-9 pl--50 pl_md--10 pl_sm--10 pt_md--30 pt_sm--30">
                 <div class="tab-content" id="v-pills-tabContent">
                     {{-- Dashboard Tab --}}
-                    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
-                        aria-labelledby="v-pills-home-tab" tabindex="0">
+                    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
                         <div class="dashboard-account-area">
                             <h2 class="title">{{ __("site/site.hello") . ' ' . $user->name }} 👋</h2>
                             <p class="disc">
@@ -128,18 +129,36 @@
                                                 <th scope="col">{{ __('site/site.coupon') }}</th>
                                                 <th scope="col">{{ __('site/site.payment_type') }}</th>
                                                 <th scope="col">{{ __('site/site.total_price') }}</th>
+                                                <th scope="col">{{ __('site/site.products_count') }}</th>
                                                 <th scope="col">{{ __('site/site.processes') }}</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="text-center">
-                                            <!-- سيتم تعبئته بالـ AJAX -->
-                                        </tbody>
+                                        <tbody class="text-center"></tbody>
                                     </table>
                                 </div>
                                 <div id="paginationLinks" class="mt-3 text-center"></div>
                             </div>
                         </div>
 
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-tracking" role="tabpanel" aria-labelledby="v-pills-tracking-tab" tabindex="0">
+                        <h3 class="mb-4">🔍 تتبع الطلب</h3>
+                        <form id="orderTrackingForm" class="w-100" method="GET" action="#">
+                            <div class="row align-items-end">
+                                <div class="col-md-9 mb-3">
+                                    <label for="orderNumber" class="form-label fw-bold">رقم الطلب</label>
+                                    <input type="text" class="form-control form-control-lg" id="orderNumber" name="number"
+                                        placeholder="ادخل رقم الطلب" required style="background-color: #eee; padding-top: 1rem; padding-bottom: 1rem; border-radius: 5px;">
+                                </div>
+                                <div class="col-md-3 mb-3 text-end">
+                                    <button type="submit" class="rts-btn btn-primary w-100">
+                                        تتبع الطلب
+                                        <i class="fas fa-search ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="trackingResult" class="mt-4"></div>
                     </div>
                 </div>
             </div>
@@ -178,13 +197,10 @@
                                             <td>${couponCode}</td>
                                             <td>${paymentType}</td>
                                             <td>${order.total_price}</td>
+                                            <td>${order.products.length}</td>
                                             <td>
                                                 <a href="#" class="btn btn-sm btn-primary me-1 show-order-details" data-id="${order.id}" title="عرض الطلب">
                                                     <i class="fa fa-eye"></i>
-                                                </a>
-
-                                                <a href="#" class="btn btn-sm btn-success download-order" data-id="${order.id}" title="تحميل الطلب">
-                                                    <i class="fa fa-download"></i>
                                                 </a>
                                             </td>
                                         </tr>`;
@@ -258,5 +274,30 @@
         });
 
     </script>
+    <script>
+        const trackUrl = "{{ route('customer.track.order') }}";
+        document.getElementById('orderTrackingForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const number = document.getElementById('orderNumber').value;
+            const trackingResult = document.getElementById('trackingResult');
+
+            trackingResult.innerHTML = '<div class="text-center my-3">جارٍ البحث عن الطلب...</div>';
+
+            fetch(trackUrl + '?number=' + encodeURIComponent(number))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        trackingResult.innerHTML = data.html;
+                    } else {
+                        trackingResult.innerHTML = `<div class="alert alert-danger text-center">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    trackingResult.innerHTML = `<div class="alert alert-danger text-center">حدث خطأ، حاول مرة أخرى</div>`;
+                });
+        });
+    </script>
+
 @endpush
 

@@ -30,5 +30,6 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['lo
             Route::get('/', [Customer\DashboardController::class, 'index'])->name('dashboard');
             Route::get('orders/{status?}', [Customer\DashboardController::class, 'ordersByStatus'])->name('orders_by_status');
             Route::get('orders/show/{order}', [Customer\DashboardController::class, 'showPartial'])->name('customer.orders.partial');
-        });
+            Route::get('track', [Customer\DashboardController::class, 'trackOrder'])->name('track.order');
+    });
 });

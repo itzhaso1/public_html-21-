@@ -75,7 +75,6 @@
                                 </form>
                                 <a href="#" class="rts-btn btn-primary mr--50 clear-all-cart">{{ __('site/site.clear_all') }}</a>
                             @endauth
-
                         </div>
                     </div>
                 </div>
