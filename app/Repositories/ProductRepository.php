@@ -93,83 +93,72 @@ class ProductRepository implements ProductInterface
      * Update (الدالة الوحيدة الصحيحة)
      * ========================= */
     public function update(Request $request, Product $product)
-{
-    $data = $this->extractData($request);
-    $product->update($data);
+    {
+        $data = $this->extractData($request);
+        $product->update($data);
 
-    // الوسوم
-    $product->tags()->sync($request->input('tags', []));
+        // الوسوم
+        $product->tags()->sync($request->input('tags', []));
 
-    // تحديث الصورة الرئيسية
-    if ($request->hasFile('product')) {
-        $media = $product->updateSingleMedia(
-            'product',
-            $request->file('product'),
-            $product,
-            null,
-            'media',
-            true
-        );
+        // تحديث الصورة الرئيسية
+        if ($request->hasFile('product')) {
+            $media = $product->updateSingleMedia(
+                'product',
+                $request->file('product'),
+                $product,
+                null,
+                'media',
+                true
+            );
 
-        if ($media) {
-            $imagePath = public_path("uploads/product/{$media}");
-            $this->addWatermark($imagePath);
+            if ($media) {
+                $imagePath = public_path("uploads/product/{$media}");
+                $this->addWatermark($imagePath);
+            }
         }
-    }
-$galleryFiles = $request->file('gallery');
 
-if (is_array($galleryFiles)) {
+        // تحديث صور المعرض
+        $galleryFiles = $request->file('gallery');
+        if (is_array($galleryFiles)) {
+            $validFiles = array_filter($galleryFiles, function ($file) {
+                return $file && $file->isValid();
+            });
 
-    // نتحقق أن فيه ملفات مرفوعة فعليًا
-    $validFiles = array_filter($galleryFiles, function ($file) {
-        return $file && $file->isValid();
-    });
+            if (count($validFiles) > 0) {
+                $product->deleteExistingMedia(
+                    'gallery',
+                    $product,
+                    null,
+                    'media',
+                    true,
+                    'gallery'
+                );
 
-    if (count($validFiles) > 0) {
-
-        // 🔥 حذف كل الصور القديمة
-        $product->deleteExistingMedia(
-            'gallery',
-            $product,
-            null,
-            'media',
-            true,
-            'gallery'
-        );
-
-        // 🔥 رفع الصور الجديدة فقط
-        $product->uploadMultipleMedia(
-            'product/gallery',
-            $validFiles,
-            $product,
-            'media',
-            false,
-            true,
-            'gallery'
-        );
-    }
-}
-
-
-
-    // ✅ حل مشكلة الفيديو (حذف القديم + رفع الجديد)
-    // ✅ تحديث الفيديو (حذف أي فيديو قديم مهما كان اسمه)
-if ($request->hasFile('video')) {
-
-    foreach ($product->media as $media) {
-        if (str_starts_with($media->mime_type, 'video')) {
-            $media->delete();
+                $product->uploadMultipleMedia(
+                    'product/gallery',
+                    $validFiles,
+                    $product,
+                    'media',
+                    false,
+                    true,
+                    'gallery'
+                );
+            }
         }
+
+        // تحديث الفيديو
+        if ($request->hasFile('video')) {
+            foreach ($product->media as $media) {
+                if (str_starts_with($media->mime_type, 'video')) {
+                    $media->delete();
+                }
+            }
+            $product->uploadVideo($request->file('video'));
+        }
+
+        return redirect()->route('admin.products.index')
+            ->with('success', 'تم تحديث المنتج بنجاح');
     }
-
-    // رفع الفيديو الجديد
-    $product->uploadVideo($request->file('video'));
-}
-
-
-    return redirect()->route('admin.products.index')
-        ->with('success', 'تم تحديث المنتج بنجاح');
-}
 
     /* =========================
      * Edit
