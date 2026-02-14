@@ -31,17 +31,13 @@ class WebsiteController extends Controller {
         
         $sectionProductIds = $sections->pluck('products')->flatten()->pluck('id')->unique();
         
-        // تعديل بسيط: إخفاء منتجات الشحن من الصفحة الرئيسية أيضاً
         $products = Product::with(['translations', 'media'])
             ->where('status', 'published')
             ->whereNotIn('id', $sectionProductIds)
-            ->whereNull('service_type') // ✅ إخفاء الجواهر من هنا
+            ->whereNull('service_type')
             ->latest()
             ->get();
-            
-        $categoryCount = $categories->count();
-        $slidesPerView = $categoryCount < 10 ? $categoryCount : 10;
- 
+
         return view('website.pages.home', ['pageTitle' => trans('site/site.home_page_title'),
             'categories' => $categories,
             'sliders' => $sliders,

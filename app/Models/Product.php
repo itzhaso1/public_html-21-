@@ -74,19 +74,8 @@ class Product extends Model implements TranslatableContract {
         return $this->belongsToMany(Section::class, 'product_section');
     }
 
-    /*public function categories() {
-        return $this->belongsToMany(Category::class, 'category_product');
-    }*/
-
     public function videos()
     {
         return $this->hasMany(ProductVideo::class);
     }
-    
-    public function getImageUrl()
-{
-
-    return asset('public/uploads/product/68f671923ab1a.jpg');
-}
-
 }
