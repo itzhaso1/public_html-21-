@@ -50,7 +50,7 @@ class ProductDataTable extends BaseDataTable {
     {
         // ✅ التعديل هنا:
         // إضافة شرط whereNull('service_type') لاستبعاد منتجات الشحن من القائمة
-        return Product::with(['media','category', 'brand', 'tags'])
+        return Product::with(['translations', 'media', 'category.translations', 'brand.translations', 'tags.translations'])
             ->whereNull('service_type') 
             ->latest();
     }

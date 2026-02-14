@@ -10,7 +10,6 @@ use Cart;
 class CartController extends Controller {
     public function __construct(protected CartInterface $cartInterface)
     {
-        $this->cartInterface = $cartInterface;
     }
     public function index() {
         $items = $this->cartInterface->get();

@@ -17,7 +17,7 @@ class PackageRepository implements PackageInterface
 
     public function create()
     {
-        $products = Product::get();
+        $products = Product::with('translations')->get();
         return view('dashboard.admin.packages.create', ['pageTitle' => 'اضافه باكدج', 'products' => $products]);
     }
 
@@ -47,7 +47,7 @@ class PackageRepository implements PackageInterface
 
     public function edit(Package $package)
     {
-        $products = Product::with(['media'])->get();
+        $products = Product::with(['translations', 'media'])->get();
         return view('dashboard.admin.packages.edit', ['pageTitle' => 'تعديل باكدج',  'package' => $package, 'products' => $products]);
     }
 

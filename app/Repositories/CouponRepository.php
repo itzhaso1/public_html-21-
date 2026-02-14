@@ -15,7 +15,7 @@ class CouponRepository implements CouponInterface {
     }
 
     public function create() {
-        $products = Product::get()->pluck('name', 'id')->toArray();
+        $products = Product::with('translations')->get()->pluck('name', 'id')->toArray();
         $categories = Category::whereStatus('active')->get()->pluck('name', 'id')->toArray();
         return view('dashboard.admin.coupons.create', [
             'pageTitle' => 'الكوبونات',
@@ -48,7 +48,7 @@ class CouponRepository implements CouponInterface {
     }
 
     public function edit(Coupon $coupon) {
-        $products = Product::get()->pluck('name', 'id')->toArray();
+        $products = Product::with('translations')->get()->pluck('name', 'id')->toArray();
         $categories = Category::whereStatus('active')->get()->pluck('name', 'id')->toArray();
 
         return view('dashboard.admin.coupons.edit', [

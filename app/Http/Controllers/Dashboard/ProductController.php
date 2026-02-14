@@ -16,10 +16,11 @@ class ProductController extends Controller
 {
     protected ERPService $erpService;
  
-    public function __construct(ERPService $erpService, protected ProductDataTable $productDataTable, protected ProductInterface $productInterface)
-    {
-        $this->productInterface = $productInterface;
-        $this->productDataTable = $productDataTable;
+    public function __construct(
+        ERPService $erpService,
+        protected ProductDataTable $productDataTable,
+        protected ProductInterface $productInterface
+    ) {
         $this->erpService = $erpService;
     }
  
@@ -106,7 +107,7 @@ class ProductController extends Controller
             return redirect()->back()->with('success', 'تم إضافة الباقة بنجاح وتصنيفها بشكل صحيح! 🎉');
  
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            return redirect()->back()->with('error', 'حدث خطأ: ' . $e->getMessage());
         }
     }
     

@@ -23,12 +23,8 @@ class Product extends Model implements TranslatableContract {
         'status',
         'published_at',
         'client_number',
-
-        'erp_id'
-        
-        
+        'erp_id',
     ];
-    protected $with = ['translations'];
 
     public $translatedAttributes = [
         'name',

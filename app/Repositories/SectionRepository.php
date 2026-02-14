@@ -22,7 +22,7 @@ class SectionRepository implements SectionInterface {
 
     public function create() {
         $orders = range(1, Section::count() + 1);
-        $products = Product::all();
+        $products = Product::with('translations')->get();
         $categories = Category::active()->get();
         return view('dashboard.admin.sections.create', [
             'pageTitle' => 'إضافة قسم',
@@ -39,7 +39,7 @@ class SectionRepository implements SectionInterface {
     public function edit(Section $section)
     {
         $orders = range(1, Section::count());
-        $products = Product::all();
+        $products = Product::with('translations')->get();
         $categories = Category::active()->get();
 
         return view('dashboard.admin.sections.edit', compact('section', 'orders', 'products', 'categories'));
